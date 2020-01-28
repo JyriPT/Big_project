@@ -79,46 +79,21 @@ namespace big_project
                 //Käännetään koodi toisin päin, otetaan tarkistusnumero talteen ja käydään kertomaan
                 char[] codeProcess = userCode.ToCharArray();
                 Array.Reverse(codeProcess);
+                //Otetaan annetun koodin tarkastusnumero talteen
                 char numCheck = codeProcess[0];
-                double mathCode = 0;
-
-                double mathTrack = 0;
-                int counter = 1;
-                int multiplier = 7;
-
-                for (int j = userCode.Length - 1; j > 0; j--)
+                //Poistetaan annetusta koodista tarkastusnumero, math funkiota varten
+                string process = String.Empty;
+                foreach (char j in codeProcess)
                 {
-                    
-                    if (multiplier == 7)
-                    {
-                        mathTrack += Char.GetNumericValue(codeProcess[counter]) * multiplier;
-                    } else if (multiplier == 3)
-                    {
-                        mathTrack += Char.GetNumericValue(codeProcess[counter]) * multiplier;
-                    } else if (multiplier == 1)
-                    {
-                        mathTrack += Char.GetNumericValue(codeProcess[counter]) * multiplier;
-                    }
-
-                    if (multiplier == 7)
-                    {
-                        multiplier = 3;
-                    } else if (multiplier == 3)
-                    {
-                        multiplier = 1;
-                    } else if (multiplier == 1)
-                    {
-                        multiplier = 7;
-                    }
-                    Console.WriteLine(mathTrack);
-                    counter++;
-
+                    process += j.ToString();
                 }
+                Console.WriteLine(process);
+                process.Remove(0, 1);
+                codeProcess = process.ToCharArray();
+                
+                double mathCode = math(codeProcess);
 
-                mathCode = roundUp(mathTrack) - mathTrack;
-
-                Console.WriteLine(mathCode);
-                Console.WriteLine(numCheck);
+                
 
                 //Prosessoidaan kertolaskusta tullut arvo
                 if (mathCode == char.GetNumericValue(numCheck))
@@ -136,6 +111,7 @@ namespace big_project
             if (codeTrue == true)
             {
                 Console.WriteLine($"Code {userInput} is valid.");
+
             } else
             {
                 Console.WriteLine($"Code {userInput} is not a valid code.");
@@ -157,6 +133,52 @@ namespace big_project
 
         }
 
+        //Tarkistusluvun laskennan käsittelevä funktio
+        public static double math(char[] codeProcess)
+        {
+            double mathCode;
+
+            double mathTrack = 0;
+            int counter = 0;
+            int multiplier = 7;
+
+            foreach (char number in codeProcess)
+            {
+                Console.WriteLine(Char.GetNumericValue(codeProcess[counter]));
+                Console.WriteLine(codeProcess[counter]);
+                if (multiplier == 7)
+                {
+                    mathTrack += Char.GetNumericValue(codeProcess[counter]) * multiplier;
+                }
+                else if (multiplier == 3)
+                {
+                    mathTrack += Char.GetNumericValue(codeProcess[counter]) * multiplier;
+                }
+                else if (multiplier == 1)
+                {
+                    mathTrack += Char.GetNumericValue(codeProcess[counter]) * multiplier;
+                }
+
+                if (multiplier == 7)
+                {
+                    multiplier = 3;
+                }
+                else if (multiplier == 3)
+                {
+                    multiplier = 1;
+                }
+                else if (multiplier == 1)
+                {
+                    multiplier = 7;
+                }
+                Console.WriteLine(mathTrack);
+                counter++;
+
+            }
+
+            mathCode = roundUp(mathTrack) - mathTrack;
+            return mathCode;
+        }
         //Luvun ylöspyöristämiseen käytetty funktio, tarvitaan tarkistusluvun luontia/tarkistusta varten
         static double roundUp(double round)
         {
