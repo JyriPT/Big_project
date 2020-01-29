@@ -37,20 +37,24 @@ namespace big_project
             //Kutsutaan funktiota, jota käyttäjä pyysi userSelect arvoa hyödyntäen
             if (userSelect == 1)
             {
-                checkCode();
+                CheckCode();
 
             } else if (userSelect == 2)
             {
-                generateDigit();
+                GenerateDigit();
 
             } else if (userSelect == 3)
             {
-                generateMany();
+                Console.WriteLine("IMPORTANT");
+                Console.WriteLine("THIS OPTION CREATES A NEW TEXT FILE IN A HARDCODED FILEPATH");
+                Console.WriteLine("IT IS RECOMMENDED YOU VERIFY THE FILEPATH IS TO YOUR LIKING, FIND IT UNDER GenerateMany()");
+                Console.WriteLine();
+                GenerateMany();
             }
         }
 
         //Funktio koodin tarkistamista varten
-        static void checkCode()
+        static void CheckCode()
         {
             bool codeTrue = false;
             string userInput;
@@ -61,15 +65,14 @@ namespace big_project
             userInput = Console.ReadLine().Trim();
 
             //Poistetaan käyttäjän antamasta syötteestä syötteen keskellä olevat välit
-            do
+            if (userInput.IndexOf(" ") != -1)
             {
-                userInput = userInput.Remove(userInput.IndexOf(" "), 1);
-
-                if (userInput.IndexOf(" ") == -1)
+                do
                 {
-                    break;
-                }
-            } while (true);
+                    userInput = userInput.Remove(userInput.IndexOf(" "), 1);
+                } while (userInput.IndexOf(" ") != -1);
+            }
+            
 
             //Muutetaan käyttäjän antama arvo int muotoon, jos ei onnistu niin koodi hylätään
             //Tällöin poistetaan ylimääräiset alkunollat
@@ -87,11 +90,9 @@ namespace big_project
             if (userCode.Length <= 20 && userCode.Length >= 4)
             {
                 //Tarkistetaan koodin oikeellisuus
-                //Käännetään koodi toisin päin, otetaan tarkistusnumero talteen ja käydään kertomaan
                 char[] codeProcess = userCode.ToCharArray();
-                Array.Reverse(codeProcess);
                 //Otetaan annetun koodin tarkastusnumero talteen
-                char numCheck = codeProcess[0];
+                char numCheck = codeProcess[userCode.Length - 1];
                 //Poistetaan annetusta koodista tarkastusnumero, math funkiota varten
                 string process = String.Empty;
                 foreach (char j in codeProcess)
@@ -99,10 +100,9 @@ namespace big_project
                     process += j.ToString();
                 }
                 process.Remove(0, 1);
-                codeProcess = process.ToCharArray();
                 
                 //Lasketaan annetun koding tarkistusnumero
-                double mathCode = math(codeProcess);
+                double mathCode = CalcCheck(process);
 
                 //Verrataan alkuperäisen koodin tarkastusnumeroa oikeelliseen
                 if (mathCode == char.GetNumericValue(numCheck))
@@ -115,21 +115,23 @@ namespace big_project
             {
                 codeTrue = false;
             }
-            //REMEMBER TO DO FORMATTING
             //Tulostetaan tarkistuksen lopputulos codeTrue arvon perusteella
             if (codeTrue == true)
             {
-                Console.WriteLine($"Code {userInput} is valid.");
+                Console.WriteLine($"Code is valid.");
+                PrintOut(userInput);
 
             } else
             {
-                Console.WriteLine($"Code {userInput} is not a valid code.");
+                Console.WriteLine($"Code is NOT a valid code.");
+                PrintOut(userInput);
+                
             }
 
         }
 
-        //Funktio koodin tarkistusluvun luomista varten
-        static void generateDigit()
+        //Funktio koodin täyden koodin tekemistä varten
+        static void GenerateDigit()
         {
             string userInput;
 
@@ -158,25 +160,105 @@ namespace big_project
 
             //Hankitaan koodille tarkistusluku, muotoillaan sopivaksi ja käytetään math() 
             //Käytetään uussia muuttujia alkuperäisen syötteen säilyttämiseksi, helpottaa tulostusta
-            char[] code = userInput.ToCharArray();
-            Array.Reverse(code);
-            double numCheck = math(code);
+            
+            double numCheck = CalcCheck(userInput);
 
             //Lisätään tarkistusnumero annettuun koodiin ja tulostetaan
             userInput += numCheck.ToString();
-            Console.WriteLine($"Your new complete code is {userInput}.");
+            PrintOut(userInput);
             
         }
 
         //Funktio usean koodin tulostamista varten
-        static void generateMany()
+        static void GenerateMany()
         {
+            int count = 0;
+            string userInput = String.Empty;
+
+            //Pyydetään käyttäjältä tuotettavien koodien määrä ja koodin pätkä, josta käydä rakentamaan
+            //Käyttäjä päästetään loopista ulos kun molemmat arvot ovat hyväksyttäviä.
+            do
+            {
+                Console.WriteLine("How many codes do you wish to generate?");
+                userInput = Console.ReadLine().Trim();
+
+                if (int.TryParse(userInput, out count) == true)
+                {
+                    Console.WriteLine("Please provide a base to work from:");
+                    userInput = Console.ReadLine().Trim();
+
+                    if (int.TryParse(userInput, out int i) == true)
+                    {
+                        break;
+                    }
+                }
+
+                Console.WriteLine("Error; Invalid input. Use only numbers, make sure base provided has 10 digits or less.");
+
+            } while (true);
+
+            //Varmistetaan että annettu aloituskohta on tarpeeksi pitkä
+            if (userInput.Length < 3)
+            {
+                do
+                {
+                    userInput += 1;
+                } while (userInput.Length < 3);
+            }
+
+            //Tulostetaan pyydetyt koodit, tallennetaan tekstitiedostoon
+            //!!!!!!
+            //TÄRKEÄÄ
+            //!!!!!!
+            //MUUTA PATH-ARVO HALUAMAKSESI OHJELMISTOPOLUKSI ENNEN TESTAUSTA
+            string path = @"C:/dev/ohjelmoinnin_perusteet/Big_project/big_project/referencenumber.txt";
+            System.IO.File.WriteAllText(path, String.Empty);
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(path, true))
+            {
+                int countProgress = 0;
+                for (int j = count; j > 0; j--)
+                {
+                    if (countProgress == 0)
+                    {
+                        userInput += CalcCheck(userInput);
+                        PrintOut(userInput);
+                        file.WriteLine(userInput);
+                        Console.WriteLine();
+
+                        countProgress++;
+                        userInput = userInput.Remove(userInput.Length - 1);
+                        userInput += countProgress.ToString();
+                    }
+                    else
+                    {
+                        userInput += CalcCheck(userInput);
+                        PrintOut(userInput);
+                        file.WriteLine(userInput);
+                        Console.WriteLine();
+
+                        countProgress++;
+                        userInput = userInput.Remove(userInput.Length - 2);
+
+                        if (countProgress == 10)
+                        {
+                            userInput += 1;
+                            countProgress = 0;
+                        }
+
+                        userInput += countProgress;
+                    }
+
+                }
+            }
 
         }
 
         //Tarkistusluvun laskennan käsittelevä funktio
-        public static double math(char[] codeProcess)
+        //Palauttaa tarkistusnumeron annetulle koodille
+        public static double CalcCheck(string userInput)
         {
+            char[] codeProcess = userInput.ToCharArray();
+            Array.Reverse(codeProcess);
             double mathCode;
 
             double mathTrack = 0;
@@ -213,11 +295,11 @@ namespace big_project
                 counter++;
             }
 
-            mathCode = roundUp(mathTrack) - mathTrack;
+            mathCode = RoundUp(mathTrack) - mathTrack;
             return mathCode;
         }
         //Luvun ylöspyöristämiseen käytetty funktio, tarvitaan tarkistusluvun luontia/tarkistusta varten
-        static double roundUp(double round)
+        static double RoundUp(double round)
         {
             if (round % 10 == 0)
             {
@@ -226,6 +308,32 @@ namespace big_project
             {
                 return (10 - round % 10) + round;
             }
+        }
+
+        //Lopullisen koodin tulostusta varten, formatoi kirjoitusasun
+        static void PrintOut(string code)
+        {
+            int length = code.Length;
+            char[] printable = code.ToCharArray();
+            int counter = 0;
+
+            for (Math.DivRem(length, 5, out int i); i > 0; i--)
+            {
+                Console.Write(printable[counter].ToString());
+
+                counter++;
+            }
+
+            do
+            {
+                Console.Write(" ");
+
+                for (int j = 0; j < 5; j++)
+                {
+                    Console.Write(printable[counter].ToString());
+                    counter++;
+                }
+            } while (counter != length);
         }
     }
 }
