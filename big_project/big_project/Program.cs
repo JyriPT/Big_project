@@ -58,10 +58,21 @@ namespace big_project
 
             //Pyydetään käyttäjältä numeroa tarkistettavaksi
             Console.WriteLine("Please enter code:");
-            userInput = Console.ReadLine();
+            userInput = Console.ReadLine().Trim();
+
+            //Poistetaan käyttäjän antamasta syötteestä syötteen keskellä olevat välit
+            do
+            {
+                userInput = userInput.Remove(userInput.IndexOf(" "), 1);
+
+                if (userInput.IndexOf(" ") == -1)
+                {
+                    break;
+                }
+            } while (true);
 
             //Muutetaan käyttäjän antama arvo int muotoon, jos ei onnistu niin koodi hylätään
-            //Tällöin poistetaan ylimääräiset välit ja alkunollat
+            //Tällöin poistetaan ylimääräiset alkunollat
             if (int.TryParse(userInput, out int i) == true)
             {
                 userCode = i.ToString();
@@ -87,15 +98,13 @@ namespace big_project
                 {
                     process += j.ToString();
                 }
-                Console.WriteLine(process);
                 process.Remove(0, 1);
                 codeProcess = process.ToCharArray();
                 
+                //Lasketaan annetun koding tarkistusnumero
                 double mathCode = math(codeProcess);
 
-                
-
-                //Prosessoidaan kertolaskusta tullut arvo
+                //Verrataan alkuperäisen koodin tarkastusnumeroa oikeelliseen
                 if (mathCode == char.GetNumericValue(numCheck))
                 {
                     codeTrue = true;
@@ -120,11 +129,43 @@ namespace big_project
         }
 
         //Funktio koodin tarkistusluvun luomista varten
-        static string generateDigit()
+        static void generateDigit()
         {
-            string giveBack = String.Empty;
+            string userInput;
 
-            return giveBack;
+            //Pyydetään käyttäjältä koodia, varmistetaan että se on oikean pituinen ja sisältää vain numeroita
+            //Samalla poistetaan syötteestä turhat välit ja etunollat
+            //Looppii avautuu kun käyttäjä antaa hyväksyttävän syötteen
+            do
+            {
+                Console.WriteLine("Please provide code to complete:");
+                userInput = Console.ReadLine();
+
+                if (int.TryParse(userInput, out int i) == true)
+                {
+                    userInput = i.ToString();
+
+                    if (userInput.Length >= 3 && userInput.Length <= 19)
+                    {
+                        break;
+                    }
+                }
+
+                Console.WriteLine("Invalid input, code must be 3-19 characters long and only contain numbers.");
+                Console.WriteLine();
+
+            } while (true);
+
+            //Hankitaan koodille tarkistusluku, muotoillaan sopivaksi ja käytetään math() 
+            //Käytetään uussia muuttujia alkuperäisen syötteen säilyttämiseksi, helpottaa tulostusta
+            char[] code = userInput.ToCharArray();
+            Array.Reverse(code);
+            double numCheck = math(code);
+
+            //Lisätään tarkistusnumero annettuun koodiin ja tulostetaan
+            userInput += numCheck.ToString();
+            Console.WriteLine($"Your new complete code is {userInput}.");
+            
         }
 
         //Funktio usean koodin tulostamista varten
@@ -144,8 +185,6 @@ namespace big_project
 
             foreach (char number in codeProcess)
             {
-                Console.WriteLine(Char.GetNumericValue(codeProcess[counter]));
-                Console.WriteLine(codeProcess[counter]);
                 if (multiplier == 7)
                 {
                     mathTrack += Char.GetNumericValue(codeProcess[counter]) * multiplier;
@@ -171,9 +210,7 @@ namespace big_project
                 {
                     multiplier = 7;
                 }
-                Console.WriteLine(mathTrack);
                 counter++;
-
             }
 
             mathCode = roundUp(mathTrack) - mathTrack;
