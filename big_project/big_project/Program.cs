@@ -45,9 +45,7 @@ namespace big_project
 
             } else if (userSelect == 3)
             {
-                Console.WriteLine("IMPORTANT");
-                Console.WriteLine("THIS OPTION CREATES A NEW TEXT FILE IN A HARDCODED FILEPATH");
-                Console.WriteLine("IT IS RECOMMENDED YOU VERIFY THE FILEPATH IS TO YOUR LIKING, FIND IT UNDER GenerateMany()");
+                Console.WriteLine("Numbers will be printed to .txt file in ´output´ folder.");
                 Console.WriteLine();
                 GenerateMany();
             }
@@ -206,12 +204,8 @@ namespace big_project
                 } while (userInput.Length < 3);
             }
 
-            //Tulostetaan pyydetyt koodit, tallennetaan tekstitiedostoon
-            //!!!!!!
-            //TÄRKEÄÄ
-            //!!!!!!
-            //MUUTA PATH-ARVO HALUAMAKSESI OHJELMISTOPOLUKSI ENNEN TESTAUSTA
-            string path = @"C:/dev/ohjelmoinnin_perusteet/Big_project/big_project/referencenumber.txt";
+            //Tulostetaan pyydetyt koodit, tallennetaan tekstitiedostoon "output" kansiossa
+            string path = @"../../../../output/referencenumber.txt";
             System.IO.File.WriteAllText(path, String.Empty);
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(path, true))
             {
