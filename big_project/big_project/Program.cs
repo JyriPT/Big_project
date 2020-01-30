@@ -45,7 +45,7 @@ namespace big_project
 
             } else if (userSelect == 3)
             {
-                Console.WriteLine("Numbers will be printed to .txt file in ´output´ folder.");
+                Console.WriteLine("Numbers will be printed to .txt file.");
                 Console.WriteLine();
                 GenerateMany();
             }
@@ -205,7 +205,7 @@ namespace big_project
             }
 
             //Tulostetaan pyydetyt koodit, tallennetaan tekstitiedostoon "output" kansiossa
-            string path = @"../../../../output/referencenumber.txt";
+            string path = @"../../../../referencenumber.txt";
             System.IO.File.WriteAllText(path, String.Empty);
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(path, true))
             {
